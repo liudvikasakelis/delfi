@@ -11,6 +11,7 @@ url = 'https://www.delfi.lt/gyvenimas/anapus-tikroves/ka-galite-suzinoti-apie-vy
 
 pg = requests.get(url)
 
+outfile = 'z.csv'
 
 ### Regexes
 
@@ -22,6 +23,7 @@ time_re = re.compile('\d{2}:\d{2}')
 
 ### Main loop
 
+main_list = list()
 
 if pg.status_code == 200:
     
@@ -30,11 +32,22 @@ if pg.status_code == 200:
     for comment in tree.xpath('//div[@data-post-id]'):
         
         new_line= {
-            'IP' : IP_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0]), 
-            'Date' : date_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0]),
-            'Time' : time_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0]),
-            'Name' : comment.xpath('./div[@class="comment-author"]/a/text()')
+            'IP' : IP_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0])[0], 
+            'Date' : date_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0])[0],
+            'Time' : time_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0])[0],
+            'Name' : re.sub('[\n\t]', '', comment.xpath('./div[@class="comment-author"]/a/text()')[0]),
+            'Comment': re.sub('[\n\t]', '', comment.xpath('./div/div[@class="comment-content-inner"]/text()')[0])
             }
         
-        print(new_line)
+        main_list.append(new_line)
         
+
+## Writeout
+
+
+with open(outfile, 'w') as csvf:
+    writer = csv.DictWriter(csvf, fieldnames=new_line.keys())
+    writer.writeheader()
+    for row in main_list:
+        writer.writerow(row)
+
