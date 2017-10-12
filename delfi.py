@@ -7,6 +7,10 @@ import requests
 import re
 
 
+
+
+
+
 url = 'https://www.delfi.lt/gyvenimas/anapus-tikroves/ka-galite-suzinoti-apie-vyra-is-jo-zodiako-zenklo.d?id=75912131&com=1&reg=0&no=0&s=2'
 
 pg = requests.get(url)
