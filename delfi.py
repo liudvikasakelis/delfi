@@ -17,11 +17,11 @@ reg = 0
 
 ### Regexes
 
-
-IP_re = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
-date_re = re.compile('\d{4}-\d{1,2}-\d{1,2}')
-time_re = re.compile('\d{2}:\d{2}')
-
+regexes = {
+    'IP' : re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'),
+    'Date' : re.compile('\d{4}-\d{1,2}-\d{1,2}'),
+    'Time' : re.compile('\d{2}:\d{2}')
+}
 
 ### Main loop
 
