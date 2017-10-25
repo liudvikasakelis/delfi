@@ -7,15 +7,13 @@ import requests
 import re
 
 
-
-
-
-
-url = 'https://www.delfi.lt/gyvenimas/anapus-tikroves/ka-galite-suzinoti-apie-vyra-is-jo-zodiako-zenklo.d?id=75912131&com=1&reg=0&no=0&s=2'
-
-pg = requests.get(url)
+url = 'https://www.delfi.lt/verslas/verslas/apklause-apie-kainas-ir-algas-tokio-issiskyrimo-dar-nera-buve.d?id=76047145'
 
 outfile = 'z.csv'
+
+s = 2
+reg = 0
+
 
 ### Regexes
 
@@ -27,24 +25,36 @@ time_re = re.compile('\d{2}:\d{2}')
 
 ### Main loop
 
+
+url = url + '&com=1' + '&reg=' + str(reg) + '&s=' + str(s) + '&no=0'
+
+
+pg = requests.get(url)
+
 main_list = list()
 
-if pg.status_code == 200:
+while pg.status_code == 200:
     
     tree = html.fromstring(pg.content.decode('utf-8'))
     
-    for comment in tree.xpath('//div[@data-post-id]'):
+    for comment in tree.xpath('//div[@data-post-id!=""]'):
         
         new_line= {
             'IP' : IP_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0])[0], 
             'Date' : date_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0])[0],
             'Time' : time_re.findall(comment.xpath('./div[@class="comment-date"]/text()')[0])[0],
-            'Name' : re.sub('[\n\t]', '', comment.xpath('./div[@class="comment-author"]/a/text()')[0]),
+            'Name' : re.sub('[\n\t]', '', comment.xpath('./div[@class="comment-author"]/text()')[0]),
             'Comment': re.sub('[\n\t]', '', comment.xpath('./div/div[@class="comment-content-inner"]/text()')[0])
             }
         
         main_list.append(new_line)
         
+    if tree.xpath('//a[@class="comments-pager-arrow-last"]/@href'):
+        url = tree.xpath('//a[@class="comments-pager-arrow-last"]/@href')[0]
+    else:
+        break
+    print(url)
+    pg = requests.get(url)
 
 ## Writeout
 
