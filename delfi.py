@@ -19,11 +19,11 @@ reg = 0
 
 
 XPATH = {
-    'IP' : './div[@class="comment-date"]/text()',
-    'Date' : './div[@class="comment-date"]/text()',
-    'Time' : './div[@class="comment-date"]/text()',
+    'IP' : 'string(./div[@class="comment-date"])',
+    'Date' : 'string(./div[@class="comment-date"])',
+    'Time' : 'string(./div[@class="comment-date"])',
     'Name' : 'string(./div[@class="comment-author"])',
-    'Comment' : './div/div[@class="comment-content-inner"]/text()'
+    'Comment' : 'string(./div/div[@class="comment-content-inner"])'
     }
 
 
@@ -65,7 +65,7 @@ while pg.status_code == 200:
         
         for field in XPATH.keys():
             try:
-                raw = comment.xpath(XPATH[field])[0]
+                raw = comment.xpath(XPATH[field])
                 if field in regex.keys():
                     raw = regex[field].findall(raw)[0]
                 if field in subs.keys():
