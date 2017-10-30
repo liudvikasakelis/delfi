@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 
+import sys
 import csv
 from lxml import html
 import requests
@@ -71,16 +72,17 @@ def whole_page_parse(tree):
     
     return main_list
     
-
-            
+    
 if __name__ == '__main__':
 
-    url = 'https://www.delfi.lt/news/ringas/lit/m-garbaciauskaite-budriene-o-ka-jei-juozas-teisus.d?id=76158889'
+    url = sys.argv[1]
+    outfile = re.findall('=(\d+)$', url)[0] + '.csv'
+        
+        
     s = 2
     reg = 0
     url = url + '&com=1' + '&reg=' + str(reg) + '&s=' + str(s) + '&no=0'
 
-    outfile = 'z.csv'
     
     pg = requests.get(url)
 
@@ -96,9 +98,8 @@ if __name__ == '__main__':
             url = tree.xpath('//a[@class="comments-pager-arrow-last"]/@href')[0]
         else:
             break
-        
+            
         print(url)
-    
         pg = requests.get(url)
 
     ### Writeout
